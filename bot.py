@@ -176,8 +176,16 @@ async def post_init(application: Application):
 
 def main():
     """Start the bot."""
-    # Using PicklePersistence to save bot_data across restarts
-    persistence = PicklePersistence(filepath="tldr_bot_data.pkl")
+     # --- MODIFICATION FOR RENDER ---
+    # On-Demand disks are mounted at a specific path, e.g., /var/data
+    # We get this path from an environment variable for flexibility.
+    persistence_path = os.path.join(
+        os.getenv("RENDER_DISK_MOUNT_PATH", "."), # Default to current dir if var not set
+        "tldr_bot_data.pkl"
+    )
+    print(f"Using persistence file at: {persistence_path}") # Good for debugging
+    persistence = PicklePersistence(filepath=persistence_path)
+    # --- END MODIFICATION ---
 
     # Create the Application and pass it your bot's token.
     application = (
